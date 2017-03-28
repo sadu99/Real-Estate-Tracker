@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,12 +20,14 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView area, bedroom, price;
+        public ImageView image;
 
         public MyViewHolder(View view) {
             super(view);
             area = (TextView) view.findViewById(R.id.area);
             bedroom = (TextView) view.findViewById(R.id.bedroom);
             price = (TextView) view.findViewById(R.id.price);
+            image = (ImageView) view.findViewById(R.id.image);
         }
     }
 
@@ -47,6 +50,9 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.MyView
         holder.area.setText(propertyObject.getArea());
         holder.bedroom.setText(propertyObject.getBedroom());
         holder.price.setText(propertyObject.getPrice());
+        if (holder.image != null) {
+            new ImageDownloaderTask(holder.image).execute(propertyObject.getUrl());
+        }
     }
 
     @Override

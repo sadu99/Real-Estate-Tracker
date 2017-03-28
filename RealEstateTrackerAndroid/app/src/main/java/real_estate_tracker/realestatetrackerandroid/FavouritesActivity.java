@@ -1,6 +1,8 @@
 package real_estate_tracker.realestatetrackerandroid;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +20,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,12 +68,14 @@ public class FavouritesActivity extends NavigationActivity{
     }
 
     private void preparePropertyData() {
-        PropertyObject propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.5074,-0.1278),"asasas");
+        String urlstr = "https://li.zoocdn.com/4393649839ebe2136c01226931ad0f5e862c243e_50_38.jpg";
+        PropertyObject propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.5074,-0.1278),"asasas",urlstr);
         mPropertiesList.add(propertyObject);
-        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1278),"asasas");
+        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1278),"asasas",urlstr);
         mPropertiesList.add(propertyObject);
-        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1478),"asasas");
+        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1478),"asasas",urlstr);
         mPropertiesList.add(propertyObject);
         mAdapter.notifyDataSetChanged();
     }
+
 }
