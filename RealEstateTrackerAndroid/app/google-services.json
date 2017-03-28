@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "477612983243",
+    "firebase_url": "https://real-estate-tracker-49711.firebaseio.com",
+    "project_id": "real-estate-tracker-49711",
+    "storage_bucket": "real-estate-tracker-49711.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:477612983243:android:d3d26d6eb948899b",
+        "android_client_info": {
+          "package_name": "real_estate_tracker.realestatetrackerandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "477612983243-k7l2ipatgbuhgm0h522r2jap36a5bdb6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACsZjA3Dhhb--K6ODCYUgWAkubc3tdJtU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
