@@ -1,20 +1,13 @@
 package real_estate_tracker.realestatetrackerandroid;
 
+
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -33,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends NavigationActivity
-        implements OnMapReadyCallback, SearchFragment.Listener{
+        implements OnMapReadyCallback, SearchFragment.Listener, DetailFragment.Listener{
 
     private GoogleMap mMap;
     private List<PropertyObject> mPropertiesList = new ArrayList<>();
@@ -80,7 +73,10 @@ public class MainActivity extends NavigationActivity
             @Override
             public void onClick(View view, int position) {
                 PropertyObject propertyObject = mPropertiesList.get(position);
-                Toast.makeText(getApplicationContext(), propertyObject.getArea() + " is selected!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), propertyObject.getArea() + " is selected!", Toast.LENGTH_SHORT).show();
+                // Create an instance of the dialog fragment and show it
+                DetailFragment dialog = DetailFragment.newInstance(propertyObject);
+                dialog.show(getSupportFragmentManager(),"DetailFragment");
             }
 
             @Override
@@ -109,11 +105,12 @@ public class MainActivity extends NavigationActivity
     }
 
     private void preparePropertyData() {
-        PropertyObject propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.5074,-0.1278),"asasas");
+        String urlstr = "https://lid.zoocdn.com/354/255/fd49855d55ea0eef657721d7ba17055a75f93f69.jpg";
+        PropertyObject propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.5074,-0.1278),"asasas",urlstr);
         mPropertiesList.add(propertyObject);
-        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1278),"asasas");
+        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1278),"asasas",urlstr);
         mPropertiesList.add(propertyObject);
-        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1478),"asasas");
+        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1478),"asasas",urlstr);
         mPropertiesList.add(propertyObject);
         mAdapter.notifyDataSetChanged();
     }
@@ -148,9 +145,7 @@ public class MainActivity extends NavigationActivity
     public void showDialog() {
         // Create an instance of the dialog fragment and show it
         SearchFragment dialog = new SearchFragment();
-        dialog.show(getFragmentManager(), "SearchFragment");
-        dialog.setCancelable(false);
-        dialog.setRetainInstance(true);
+        dialog.show(getSupportFragmentManager(),"SearchFragment");
     }
 
     @Override
@@ -161,6 +156,11 @@ public class MainActivity extends NavigationActivity
 
     @Override
     public void onDialogNegativeClick(DialogInterface dialog) {
+
+    }
+
+    @Override
+    public void onFavouriteClick(DialogInterface dialog) {
 
     }
 }

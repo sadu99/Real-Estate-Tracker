@@ -3,7 +3,7 @@ package real_estate_tracker.realestatetrackerandroid;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -67,6 +67,7 @@ public class SearchFragment extends DialogFragment {
                     }
                 });
 
+        builder.setCancelable(true);
         return builder.create();
     }
 
