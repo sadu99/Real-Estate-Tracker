@@ -41,6 +41,7 @@ public class MainActivity extends NavigationActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mNavigationView.setCheckedItem(R.id.nav_search);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_main, contentFrameLayout);
 
