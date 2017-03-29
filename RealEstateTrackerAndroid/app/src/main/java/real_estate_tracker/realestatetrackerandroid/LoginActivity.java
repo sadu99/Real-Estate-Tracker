@@ -21,6 +21,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.IgnoreExtraProperties;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,17 +42,28 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
 
+                    String name = user.getDisplayName().toString();
+                    String email = user.getEmail().toString();
+                    String id = user.getUid();
+
+                    User userObj = new User(name, email);
+
                     Log.d("USER_NAME", user.getDisplayName().toString());
                     Log.d("USER_EMAIL", user.getEmail().toString());
 
+                    mDatabase.child("users").child(id).setValue(userObj);
 
-                    openMain();
+
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
 
                     // User is signed in
                     Log.d("firebase:signed_in:", "onAuthStateChanged:signed_in:" + user.getUid());
@@ -95,11 +110,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void openMain(){
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -130,17 +140,28 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d("signInWithCredential", "signInWithCredential:onComplete:" + task.isSuccessful());
 
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w("signInWithCredential", "signInWithCredential", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
-
-                        // ...
                     }
                 });
+    }
+
+    @IgnoreExtraProperties
+    public static class User {
+
+        public String name;
+        public String email;
+
+        public User() {
+        }
+
+        public User(String name, String email) {
+            this.name = name;
+            this.email = email;
+        }
+
     }
 }
