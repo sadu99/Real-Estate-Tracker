@@ -1,5 +1,6 @@
 package real_estate_tracker.realestatetrackerandroid;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FavouritesActivity extends NavigationActivity{
+public class FavouritesActivity extends NavigationActivity implements DetailFragment.Listener{
 
     private List<PropertyObject> mPropertiesList = new ArrayList<>();
     private RecyclerView mRecyclerView;
@@ -56,7 +57,8 @@ public class FavouritesActivity extends NavigationActivity{
             @Override
             public void onClick(View view, int position) {
                 PropertyObject propertyObject = mPropertiesList.get(position);
-                Toast.makeText(getApplicationContext(), propertyObject.getArea() + " is selected!", Toast.LENGTH_SHORT).show();
+                DetailFragment dialog = DetailFragment.newInstance(propertyObject);
+                dialog.show(getSupportFragmentManager(),"DetailFragment");
             }
 
             @Override
@@ -79,4 +81,8 @@ public class FavouritesActivity extends NavigationActivity{
         mAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void onFavouriteClick(DialogInterface dialog) {
+
+    }
 }

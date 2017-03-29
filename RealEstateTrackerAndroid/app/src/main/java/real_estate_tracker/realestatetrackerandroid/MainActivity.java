@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends NavigationActivity
-        implements OnMapReadyCallback, SearchFragment.Listener, DetailFragment.Listener{
+        implements OnMapReadyCallback, SearchFragment.Listener, DetailFragment.Listener, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
     private List<PropertyObject> mPropertiesList = new ArrayList<>();
@@ -99,19 +99,27 @@ public class MainActivity extends NavigationActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        mMap.setOnMarkerClickListener(this);
         // Constrain the camera target to the UK bounds.
         mMap.setLatLngBoundsForCameraTarget(UKLatLongBounds);
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(UKLocation,5));
     }
 
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        int position = (int)(marker.getTag());
+        mRecyclerView.smoothScrollToPosition(position);
+        return false;
+    }
+
+
     private void preparePropertyData() {
         String urlstr = "https://lid.zoocdn.com/354/255/fd49855d55ea0eef657721d7ba17055a75f93f69.jpg";
-        PropertyObject propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.5074,-0.1278),"asasas",urlstr);
+        PropertyObject propertyObject = new PropertyObject("a", "a",new LatLng(51.5074,-0.1278),"a",urlstr);
         mPropertiesList.add(propertyObject);
-        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1278),"asasas",urlstr);
+        propertyObject = new PropertyObject("b", "b",new LatLng(51.6074,-0.1278),"b",urlstr);
         mPropertiesList.add(propertyObject);
-        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1478),"asasas",urlstr);
+        propertyObject = new PropertyObject("c", "c",new LatLng(51.6074,-0.1478),"c",urlstr);
         mPropertiesList.add(propertyObject);
         mAdapter.notifyDataSetChanged();
     }
@@ -130,7 +138,7 @@ public class MainActivity extends NavigationActivity
                                     LatLng latlang = elements.getLocation();
                                     Marker poi = mMap.addMarker(new MarkerOptions().position(latlang).title(elements.getArea())
                                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                                    poi.setTag(0);
+                                    poi.setTag(mCounter-1);
                                     mMarkers.add(poi);
                                 }
                             }
@@ -164,4 +172,5 @@ public class MainActivity extends NavigationActivity
     public void onFavouriteClick(DialogInterface dialog) {
 
     }
+
 }
