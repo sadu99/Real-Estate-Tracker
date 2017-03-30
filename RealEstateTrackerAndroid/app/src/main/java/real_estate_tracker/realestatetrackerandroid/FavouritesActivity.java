@@ -67,19 +67,19 @@ public class FavouritesActivity extends NavigationActivity implements DetailFrag
             }
         }));
 
-        preparePropertyData();
+//        preparePropertyData();
     }
 
-    private void preparePropertyData() {
-        String urlstr = "https://li.zoocdn.com/4393649839ebe2136c01226931ad0f5e862c243e_50_38.jpg";
-        PropertyObject propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.5074,-0.1278),"asasas",urlstr);
-        mPropertiesList.add(propertyObject);
-        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1278),"asasas",urlstr);
-        mPropertiesList.add(propertyObject);
-        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1478),"asasas",urlstr);
-        mPropertiesList.add(propertyObject);
-        mAdapter.notifyDataSetChanged();
-    }
+//    private void preparePropertyData() {
+//        String urlstr = "https://li.zoocdn.com/4393649839ebe2136c01226931ad0f5e862c243e_50_38.jpg";
+//        PropertyObject propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.5074,-0.1278),"asasas",urlstr);
+//        mPropertiesList.add(propertyObject);
+//        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1278),"asasas",urlstr);
+//        mPropertiesList.add(propertyObject);
+//        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1478),"asasas",urlstr);
+//        mPropertiesList.add(propertyObject);
+//        mAdapter.notifyDataSetChanged();
+//    }
 
     @Override
     public void onFavouriteClick(DialogInterface dialog) {

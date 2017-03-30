@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -25,14 +26,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
 
-public class LoginActivity extends AppCompatActivity {
+import org.json.JSONObject;
+
+public class LoginActivity extends AppCompatActivity implements NetworkRequest.Listener{
 
     private TextView mInfo;
     private LoginButton mLoginButton;
     private CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private DatabaseReference mDatabase;
+    NetworkRequest mNetworkRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,25 +45,18 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mNetworkRequest = new NetworkRequest(this,this);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-
                     String name = user.getDisplayName().toString();
                     String email = user.getEmail().toString();
                     String id = user.getUid();
 
-                    User userObj = new User(name, email);
-
-                    Log.d("USER_NAME", user.getDisplayName().toString());
-                    Log.d("USER_EMAIL", user.getEmail().toString());
-
-                    mDatabase.child("users").child(id).setValue(userObj);
-
+                    mNetworkRequest.postRequest("user",null);
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -147,6 +143,16 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onSuccess(JSONObject response) {
+
+    }
+
+    @Override
+    public void onError(VolleyError error, Exception e) {
+
     }
 
     @IgnoreExtraProperties

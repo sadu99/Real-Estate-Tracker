@@ -1,5 +1,6 @@
 package real_estate_tracker.realestatetrackerandroid;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -49,6 +50,10 @@ class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
     private Bitmap downloadBitmap(String url) {
         HttpURLConnection urlConnection = null;
         try {
+            if (url.toString().isEmpty() || url == null) {
+                return BitmapFactory.decodeResource(Resources.getSystem(),
+                        R.drawable.ic_error_black_24dp);
+            }
             URL uri = new URL(url);
             urlConnection = (HttpURLConnection) uri.openConnection();
             int statusCode = urlConnection.getResponseCode();
