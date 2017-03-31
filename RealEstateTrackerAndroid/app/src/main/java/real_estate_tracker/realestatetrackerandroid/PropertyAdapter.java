@@ -47,16 +47,22 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.MyView
     @Override
     public void onBindViewHolder(PropertyAdapter.MyViewHolder holder, int position) {
         PropertyObject propertyObject = mPropertiesList.get(position);
-        holder.area.setText(propertyObject.getArea());
-        holder.bedroom.setText(propertyObject.getBedroom());
+//        holder.area.setText(propertyObject.getArea());
+//        holder.bedroom.setText(propertyObject.getBedroom());
         holder.price.setText(propertyObject.getPrice());
         if (holder.image != null) {
-            new ImageDownloaderTask(holder.image).execute(propertyObject.getUrl());
+            new ImageDownloaderTask(holder.image).execute(propertyObject.getUrlThumbnail());
         }
     }
 
     @Override
     public int getItemCount() {
         return mPropertiesList.size();
+    }
+
+    public void swap(List<PropertyObject> propertiesList){
+        mPropertiesList.clear();
+        mPropertiesList.addAll(propertiesList);
+        notifyDataSetChanged();
     }
 }

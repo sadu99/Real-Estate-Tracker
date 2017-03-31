@@ -21,19 +21,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.io.Serializable;
+
 /**
  * Created by Sanhar on 2017-03-27.
  */
 
-public class DetailFragment extends DialogFragment {
+public class DetailFragment extends DialogFragment implements Serializable {
     public interface Listener {
         void onFavouriteClick(DialogInterface dialog);
     }
 
     // Use this instance of the interface to deliver action events
     Listener mListener;
-    private TextView mArea,mPrice,mBedrooms,mDescription;
-    private ImageView mImage,mImageArea,mImagePrice,mImageBath,mImageRoom;
+    private TextView mCategory,mPrice,mBedrooms,mBathrooms,mDescription,mTitle;
+    private ImageView mImage,mImageCategory,mImagePrice,mImageBath,mImageBedroom;
     private ToggleButton mFavouriteButton;
 
     public static DetailFragment newInstance(PropertyObject property) {
@@ -77,20 +79,31 @@ public class DetailFragment extends DialogFragment {
     }
 
     private void initText(PropertyObject property, View layout){
-        mArea = (TextView) layout.findViewById(R.id.area);
+        mCategory = (TextView) layout.findViewById(R.id.category);
         mPrice = (TextView)layout.findViewById(R.id.price);
+        mBedrooms = (TextView)layout.findViewById(R.id.bedroom);
+        mBathrooms = (TextView)layout.findViewById(R.id.bath);
         mDescription = (TextView)layout.findViewById(R.id.description);
+        mTitle = (TextView)layout.findViewById(R.id.title);
+
+        mCategory.setText(property.getCategory());
+        mPrice.setText(property.getPrice());
+        mBedrooms.setText(property.getBedrooms());
+        mBathrooms.setText(property.getBathrooms());
+        mDescription.setText(property.getDescription());
+        mTitle.setText(property.getAddress());
+
         mImage = (ImageView) layout.findViewById(R.id.image);
-        mImageArea = (ImageView) layout.findViewById(R.id.image_area);
+        mImageCategory = (ImageView) layout.findViewById(R.id.image_category);
         mImageBath = (ImageView) layout.findViewById(R.id.image_bath);
-        mImageRoom = (ImageView) layout.findViewById(R.id.image_room);
+        mImageBedroom = (ImageView) layout.findViewById(R.id.image_bedroom);
         mImagePrice = (ImageView) layout.findViewById(R.id.image_price);
         mImagePrice.setImageDrawable(getResources().getDrawable(R.drawable.ic_attach_money_black_24dp));
-        mImageArea.setImageDrawable(getResources().getDrawable(R.drawable.ic_location_on_black_24dp));
+        mImageCategory.setImageDrawable(getResources().getDrawable(R.drawable.ic_location_on_black_24dp));
         mImageBath.setImageDrawable(getResources().getDrawable(R.drawable.ic_hot_tub_black_24dp));
-        mImageRoom.setImageDrawable(getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp));
-        mArea.setText(property.getArea());
-        mPrice.setText(property.getPrice());
+        mImageBedroom.setImageDrawable(getResources().getDrawable(R.drawable.ic_airline_seat_individual_suite_black_24dp));
+
+
         new ImageDownloaderTask(mImage).execute(property.getUrl());
         mFavouriteButton = (ToggleButton) layout.findViewById(R.id.favourite_button);
         mFavouriteButton.setChecked(false);
