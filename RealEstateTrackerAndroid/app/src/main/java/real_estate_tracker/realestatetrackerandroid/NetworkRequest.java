@@ -24,7 +24,7 @@ public class NetworkRequest {
     Context mContext;
 
     public interface Listener {
-        void onSuccess(JSONObject response) throws JSONException;
+        void onSuccess(JSONObject response,String type) throws JSONException;
         void onError(VolleyError error, Exception e);
     }
 
@@ -33,7 +33,7 @@ public class NetworkRequest {
         mContext = context;
     }
 
-    public void postRequest(String url,JSONObject postObj){
+    public void postRequest(String url, JSONObject postObj, final String type){
         url = ENDPOINT+url;
         try {
             RequestQueue queue = Volley.newRequestQueue(mContext);
@@ -43,7 +43,7 @@ public class NetworkRequest {
                 public void onResponse(JSONObject response) {
                     if(mListener != null)
                         try {
-                            mListener.onSuccess(response);
+                            mListener.onSuccess(response,type);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -64,7 +64,7 @@ public class NetworkRequest {
         }
     }
 
-    public void putRequest(String url,JSONObject postObj){
+    public void putRequest(String url, JSONObject postObj, final String type){
         url = ENDPOINT+url;
         try {
             RequestQueue queue = Volley.newRequestQueue(mContext);
@@ -74,7 +74,7 @@ public class NetworkRequest {
                 public void onResponse(JSONObject response) {
                     if(mListener != null)
                         try {
-                            mListener.onSuccess(response);
+                            mListener.onSuccess(response,type);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -95,7 +95,7 @@ public class NetworkRequest {
         }
     }
 
-    public void getRequest(String url){
+    public void getRequest(String url, final String type){
         url = ENDPOINT+url;
         try {
             RequestQueue queue = Volley.newRequestQueue(mContext);
@@ -105,7 +105,7 @@ public class NetworkRequest {
                 public void onResponse(JSONObject response) {
                     if(mListener != null)
                         try {
-                            mListener.onSuccess(response);
+                            mListener.onSuccess(response,type);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

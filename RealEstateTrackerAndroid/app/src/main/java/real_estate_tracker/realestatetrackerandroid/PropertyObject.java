@@ -15,7 +15,7 @@ public class PropertyObject implements Serializable {
     private String mListingId,mBathrooms,mBedrooms,mUrl,mUrlThumbnail,mPropertyType,mAgentName
             ,mAgentAddress,mAgentPhone,mAddress,mPrice,mDescription,mCategory;
     private Double mLatitude,mLongitude;
-//    private LatLng mLocation;
+    private boolean mIsFavourite;
 
     PropertyObject(){
     }
@@ -47,10 +47,6 @@ public class PropertyObject implements Serializable {
     public Double getLongitude(){
         return mLongitude;
     }
-
-//    public LatLng getLocation(){
-//        return mLocation;
-//    }
 
     public String getPropertyType(){
         return mPropertyType;
@@ -84,6 +80,8 @@ public class PropertyObject implements Serializable {
         return mCategory;
     }
 
+    public boolean getIsFavourite(){return mIsFavourite;}
+
     public void setListingId(String listingId){
         mListingId = listingId;
     }
@@ -111,10 +109,6 @@ public class PropertyObject implements Serializable {
     public void setLongitude(Double longitude){
         mLongitude = longitude;
     }
-
-//    public void setLocation(LatLng location){
-//        mLocation = location;
-//    }
 
     public void setPropertyType(String propertyType){
         mPropertyType = propertyType;
@@ -148,6 +142,8 @@ public class PropertyObject implements Serializable {
         mCategory = category;
     }
 
+    public void setIsFavourite (Boolean isFavourite) {mIsFavourite = isFavourite;}
+
     public void setObject(JSONObject jsonObject) throws JSONException {
         setListingId(jsonObject.get("Listing_id").toString());
         setBathrooms(getValue(jsonObject.get("Num_bathrooms").toString(),"0"));
@@ -156,7 +152,6 @@ public class PropertyObject implements Serializable {
         setUrlThumbnail(jsonObject.get("Thumbnail_image_url").toString());
         setLatitude(Double.parseDouble(jsonObject.get("Latitude").toString()));
         setLongitude(Double.parseDouble(jsonObject.get("Longitude").toString()));
-//        setLocation(new LatLng(getLatitude(),getLongitude()));
         setPropertyType(getValue(jsonObject.get("Property_type").toString(),"N/A"));
         setAgentName(getValue(jsonObject.get("Agent_name").toString(),"N/A"));
         setAgentAddress(getValue(jsonObject.get("Agent_address").toString(),"N/A"));

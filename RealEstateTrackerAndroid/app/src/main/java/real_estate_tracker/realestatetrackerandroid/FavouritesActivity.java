@@ -1,46 +1,34 @@
 package real_estate_tracker.realestatetrackerandroid;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
+import org.json.JSONException;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class FavouritesActivity extends NavigationActivity implements DetailFragment.Listener{
+public class FavouritesActivity extends NavigationActivity implements DetailFragment.Listener, NetworkOperations.Listener {
 
     private List<PropertyObject> mPropertiesList = new ArrayList<>();
     private RecyclerView mRecyclerView;
     private PropertyAdapter mAdapter;
+    private NetworkOperations mNetworkOperations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mNetworkOperations = new NetworkOperations(this,this);
         mNavigationView.setCheckedItem(R.id.nav_favourite);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_favourites, contentFrameLayout);
-
+        mNetworkOperations.getFavourites();
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         mAdapter = new PropertyAdapter(mPropertiesList);
@@ -66,23 +54,39 @@ public class FavouritesActivity extends NavigationActivity implements DetailFrag
 
             }
         }));
-
-//        preparePropertyData();
     }
 
-//    private void preparePropertyData() {
-//        String urlstr = "https://li.zoocdn.com/4393649839ebe2136c01226931ad0f5e862c243e_50_38.jpg";
-//        PropertyObject propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.5074,-0.1278),"asasas",urlstr);
-//        mPropertiesList.add(propertyObject);
-//        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1278),"asasas",urlstr);
-//        mPropertiesList.add(propertyObject);
-//        propertyObject = new PropertyObject("asas", "asasa",new LatLng(51.6074,-0.1478),"asasas",urlstr);
-//        mPropertiesList.add(propertyObject);
-//        mAdapter.notifyDataSetChanged();
-//    }
+    @Override
+    public void onDismissDetailFragment(Boolean isFavourite,Boolean prevFavourite, String listingID) throws JSONException {
+        mNetworkOperations.addFavourites(isFavourite,prevFavourite,listingID);
+    }
 
     @Override
-    public void onFavouriteClick(DialogInterface dialog) {
+    public void onGetFavouritesSuccess(ArrayList<PropertyObject> response) throws JSONException {
+        if (response != null){
+            mPropertiesList.clear();
+            mPropertiesList.addAll(response);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
 
+    @Override
+    public void onAddFavouritesSuccess(String response) throws JSONException {
+        Toast.makeText(this,"Successfully added property to your favourites",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onSearchSuccess(ArrayList<PropertyObject> response) throws JSONException {
+
+    }
+
+    @Override
+    public void onLoginSuccess(String response) {
+
+    }
+
+    @Override
+    public void onError(String error) {
+        Toast.makeText(this,error,Toast.LENGTH_LONG).show();
     }
 }

@@ -7,12 +7,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-
-import com.android.volley.VolleyError;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,17 +21,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends NavigationActivity
-        implements OnMapReadyCallback, SearchFragment.Listener, DetailFragment.Listener, GoogleMap.OnMarkerClickListener, NetworkRequest.Listener,Serializable {
+        implements OnMapReadyCallback, SearchFragment.Listener, DetailFragment.Listener, GoogleMap.OnMarkerClickListener, Serializable, NetworkOperations.Listener {
 
     private GoogleMap mMap;
     private List<PropertyObject> mPropertiesList = new ArrayList<>();
@@ -43,14 +39,17 @@ public class MainActivity extends NavigationActivity
     private LatLng UKLocation = new LatLng(51.5074,-0.1278);
     private Integer mCounter;
     private ArrayList<Marker> mMarkers = new ArrayList<>();
-    private NetworkRequest mNetworkRequest;
+    private NetworkOperations mNetworkOperations;
+    private final static String TAG_FRAGMENT = "Detail Fragment";
+    private int mPosition;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mNavigationView.setCheckedItem(R.id.nav_search);
         FrameLayout contentFrameLayout = (FrameLayout) findViewById(R.id.content_frame); //Remember this is the FrameLayout area within your activity_main.xml
         getLayoutInflater().inflate(R.layout.activity_main, contentFrameLayout);
-        mNetworkRequest = new NetworkRequest(this,this);
+        mNetworkOperations = new NetworkOperations(this,this);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,14 +74,14 @@ public class MainActivity extends NavigationActivity
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(mAdapter);
-
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), mRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 PropertyObject propertyObject = mPropertiesList.get(position);
+                mPosition = position;
                 // Create an instance of the dialog fragment and show it
                 DetailFragment dialog = DetailFragment.newInstance(propertyObject);
-                dialog.show(getSupportFragmentManager(),"DetailFragment");
+                dialog.show(getSupportFragmentManager(),TAG_FRAGMENT);
             }
 
             @Override
@@ -116,18 +115,6 @@ public class MainActivity extends NavigationActivity
         mRecyclerView.smoothScrollToPosition(position);
         return false;
     }
-
-
-//    private void preparePropertyData() {
-//        String urlstr = "https://lid.zoocdn.com/354/255/fd49855d55ea0eef657721d7ba17055a75f93f69.jpg";
-//        PropertyObject propertyObject = new PropertyObject("a", "a",new LatLng(51.5074,-0.1278),"a",urlstr);
-//        mPropertiesList.add(propertyObject);
-//        propertyObject = new PropertyObject("b", "b",new LatLng(51.6074,-0.1278),"b",urlstr);
-//        mPropertiesList.add(propertyObject);
-//        propertyObject = new PropertyObject("c", "c",new LatLng(51.6074,-0.1478),"c",urlstr);
-//        mPropertiesList.add(propertyObject);
-//        mAdapter.notifyDataSetChanged();
-//    }
 
     public void addPropertyMarkers(){
         new Thread() {
@@ -166,52 +153,49 @@ public class MainActivity extends NavigationActivity
     @Override
     public void onDialogPositiveClick(DialogInterface dialog, EditText text) {
         String area = text.getText().toString() ;
-        String url = "location/" + area;
-        mNetworkRequest.getRequest(url);
+        mNetworkOperations.getSearch(area,"");
     }
 
     @Override
     public void onDialogNegativeClick(DialogInterface dialog) {
-
+        dialog.dismiss();
     }
 
     @Override
-    public void onFavouriteClick(DialogInterface dialog) {
-
-    }
-
-    @Override
-    public void onSuccess(JSONObject response) throws JSONException {
-        if (response.get("count").toString() == "0"){
-            if (response.get("error") != null){
-                Toast.makeText(this,response.get("error").toString(),Toast.LENGTH_LONG).show();
-            }
-        } else {
-            JSONArray propertyListings = (JSONArray) response.get("listings");
-            addPropertyListings(propertyListings);
-            mMap.clear();
-            addPropertyMarkers();
-            mAdapter.notifyDataSetChanged();
+    public void onDismissDetailFragment(Boolean isFavourite, Boolean prevFavourite, String listingID) throws JSONException {
+        mNetworkOperations.addFavourites(isFavourite,prevFavourite,listingID);
+        if (isFavourite){
+            mPropertiesList.get(mPosition).setIsFavourite(isFavourite);
         }
     }
 
     @Override
-    public void onError(VolleyError error, Exception e) {
-        String str;
-        if (error.getMessage() == null){
-            str = "Error";
-        } else {
-            str = error.getMessage();
-        }
-        Toast.makeText(this,str,Toast.LENGTH_LONG).show();
+    public void onGetFavouritesSuccess(ArrayList<PropertyObject> response) throws JSONException {
     }
 
-    public void addPropertyListings(JSONArray jsonArray) throws JSONException {
-        mPropertiesList.clear();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            PropertyObject propertyObject = new PropertyObject();
-            propertyObject.setObject((JSONObject) jsonArray.get(i));
-            mPropertiesList.add(propertyObject);
+    @Override
+    public void onAddFavouritesSuccess(String response) throws JSONException {
+        Toast.makeText(this,"Successfully added property to your favourites",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onSearchSuccess(ArrayList<PropertyObject> response) throws JSONException {
+        if (response != null){
+            mPropertiesList.clear();
+            mPropertiesList.addAll(response);
         }
+        mMap.clear();
+        addPropertyMarkers();
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoginSuccess(String response) {
+
+    }
+
+    @Override
+    public void onError(String error) {
+        Toast.makeText(this,error,Toast.LENGTH_LONG).show();
     }
 }

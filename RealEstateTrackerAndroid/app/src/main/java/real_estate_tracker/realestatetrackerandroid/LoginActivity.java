@@ -8,7 +8,6 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.VolleyError;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -22,20 +21,20 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
 
-import org.json.JSONObject;
+import org.json.JSONException;
 
-public class LoginActivity extends AppCompatActivity implements NetworkRequest.Listener{
+import java.util.ArrayList;
+
+public class LoginActivity extends AppCompatActivity implements NetworkOperations.Listener {
 
     private TextView mInfo;
     private LoginButton mLoginButton;
     private CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    NetworkRequest mNetworkRequest;
+    private NetworkOperations mNetworkOperations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +44,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkRequest.L
 
         mAuth = FirebaseAuth.getInstance();
 
-        mNetworkRequest = new NetworkRequest(this,this);
+        mNetworkOperations = new NetworkOperations(this,this);
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -55,8 +54,11 @@ public class LoginActivity extends AppCompatActivity implements NetworkRequest.L
                     String name = user.getDisplayName().toString();
                     String email = user.getEmail().toString();
                     String id = user.getUid();
-
-                    mNetworkRequest.postRequest("user",null);
+                    try {
+                        mNetworkOperations.addUser(name,id,email);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -139,35 +141,34 @@ public class LoginActivity extends AppCompatActivity implements NetworkRequest.L
                         if (!task.isSuccessful()) {
                             Log.w("signInWithCredential", "signInWithCredential", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                                    Toast.LENGTH_LONG).show();
                         }
                     }
                 });
     }
 
     @Override
-    public void onSuccess(JSONObject response) {
+    public void onGetFavouritesSuccess(ArrayList<PropertyObject> response) throws JSONException {
 
     }
 
     @Override
-    public void onError(VolleyError error, Exception e) {
+    public void onAddFavouritesSuccess(String response) throws JSONException {
 
     }
 
-    @IgnoreExtraProperties
-    public static class User {
+    @Override
+    public void onSearchSuccess(ArrayList<PropertyObject> response) throws JSONException {
 
-        public String name;
-        public String email;
+    }
 
-        public User() {
-        }
+    @Override
+    public void onLoginSuccess(String response) {
+        Toast.makeText(LoginActivity.this, response, Toast.LENGTH_LONG).show();
+    }
 
-        public User(String name, String email) {
-            this.name = name;
-            this.email = email;
-        }
-
+    @Override
+    public void onError(String error) {
+        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
     }
 }

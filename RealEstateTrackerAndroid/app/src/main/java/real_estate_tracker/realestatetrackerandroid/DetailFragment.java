@@ -21,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import org.json.JSONException;
+
 import java.io.Serializable;
 
 /**
@@ -29,7 +31,7 @@ import java.io.Serializable;
 
 public class DetailFragment extends DialogFragment implements Serializable {
     public interface Listener {
-        void onFavouriteClick(DialogInterface dialog);
+        void onDismissDetailFragment(Boolean isFavourite,Boolean prevFavourite,String listingID) throws JSONException;
     }
 
     // Use this instance of the interface to deliver action events
@@ -37,6 +39,8 @@ public class DetailFragment extends DialogFragment implements Serializable {
     private TextView mCategory,mPrice,mBedrooms,mBathrooms,mDescription,mTitle;
     private ImageView mImage,mImageCategory,mImagePrice,mImageBath,mImageBedroom;
     private ToggleButton mFavouriteButton;
+    private Boolean isFavourite,prevFavourite;
+    private String mListingID;
 
     public static DetailFragment newInstance(PropertyObject property) {
         DetailFragment frag = new DetailFragment();
@@ -92,6 +96,7 @@ public class DetailFragment extends DialogFragment implements Serializable {
         mBathrooms.setText(property.getBathrooms());
         mDescription.setText(property.getDescription());
         mTitle.setText(property.getAddress());
+        mListingID = property.getListingId();
 
         mImage = (ImageView) layout.findViewById(R.id.image);
         mImageCategory = (ImageView) layout.findViewById(R.id.image_category);
@@ -106,22 +111,41 @@ public class DetailFragment extends DialogFragment implements Serializable {
 
         new ImageDownloaderTask(mImage).execute(property.getUrl());
         mFavouriteButton = (ToggleButton) layout.findViewById(R.id.favourite_button);
-        mFavouriteButton.setChecked(false);
+        prevFavourite = property.getIsFavourite();
+        isFavourite = prevFavourite;
         Drawable star = getResources().getDrawable(R.drawable.ic_star_black_24dp);
         star.setColorFilter(getResources().getColor(R.color.year), PorterDuff.Mode.SRC_IN);
         mFavouriteButton.setBackgroundDrawable(star);
+        mFavouriteButton.setChecked(isFavourite);
         mFavouriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Drawable star = getResources().getDrawable(R.drawable.ic_star_black_24dp);
-                if (isChecked) {
-                    star.setColorFilter(getResources().getColor(R.color.year), PorterDuff.Mode.SRC_IN);
-                    mFavouriteButton.setBackgroundDrawable(star);
-                }else{
-                    star.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_IN);
-                    mFavouriteButton.setBackgroundDrawable(star);
-                }
+                checkFavourite(!isChecked);
             }
         });
+        checkFavourite(prevFavourite);
+    }
+
+    private void checkFavourite(boolean isChecked){
+        Drawable star = getResources().getDrawable(R.drawable.ic_star_black_24dp);
+        if (!isChecked) {
+            star.setColorFilter(getResources().getColor(R.color.year), PorterDuff.Mode.SRC_IN);
+            mFavouriteButton.setBackgroundDrawable(star);
+            isFavourite = false;
+        }else{
+            star.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_IN);
+            mFavouriteButton.setBackgroundDrawable(star);
+            isFavourite = true;
+        }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        try {
+            mListener.onDismissDetailFragment(isFavourite,prevFavourite,mListingID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
