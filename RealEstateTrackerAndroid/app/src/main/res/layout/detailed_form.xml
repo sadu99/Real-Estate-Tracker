@@ -1,130 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
-    <ToggleButton
-        android:id="@+id/favourite_button"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:textOn=""
-        android:textOff=""/>
 
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_toLeftOf="@+id/favourite_button"
+        android:gravity="center|top"
         android:text="Title"
         android:textAlignment="center"
         android:textSize="24sp" />
 
+    <ImageView
+        android:id="@+id/image"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/title"
-        android:orientation="vertical" >
-        <ImageView
-            android:id="@+id/image"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <!--<ScrollView android:layout_height="30dp"-->
-            <!--android:layout_width="match_parent">-->
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <ImageView
+                android:id="@+id/image_price"
+                android:layout_width="match_parent"
+                android:layout_weight="2"
+                android:layout_height="0dp" />
             <TextView
-                android:id="@+id/description"
+                android:id="@+id/price"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="Description" />
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-                <ImageView
-                    android:id="@+id/image_price"
-                    android:layout_width="match_parent"
-                    android:layout_weight="2"
-                    android:layout_height="0dp" />
-                <TextView
-                    android:id="@+id/price"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_centerHorizontal="true"
-                    android:textAlignment="center"
-                    android:text="Price" />
-            </LinearLayout>
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-                <ImageView
-                    android:id="@+id/image_category"
-                    android:layout_width="match_parent"
-                    android:layout_weight="2"
-                    android:layout_height="0dp" />
-                <TextView
-                    android:id="@+id/category"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_centerHorizontal="true"
-                    android:textAlignment="center"
-                    android:text="Area" />
-            </LinearLayout>
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-                <ImageView
-                    android:id="@+id/image_bedroom"
-                    android:layout_width="match_parent"
-                    android:layout_weight="2"
-                    android:layout_height="0dp" />
-                <TextView
-                    android:id="@+id/bedroom"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_centerHorizontal="true"
-                    android:textAlignment="center"
-                    android:text="Area" />
-            </LinearLayout>
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-                <ImageView
-                    android:id="@+id/image_bath"
-                    android:layout_width="match_parent"
-                    android:layout_weight="2"
-                    android:layout_height="0dp" />
-                <TextView
-                    android:id="@+id/bath"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_centerHorizontal="true"
-                    android:textAlignment="center"
-                    android:text="Area" />
-            </LinearLayout>
+                android:textAlignment="center"
+                android:text="Price" />
         </LinearLayout>
-        <!--</ScrollView>-->
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <ImageView
+                android:id="@+id/image_category"
+                android:layout_width="match_parent"
+                android:layout_weight="2"
+                android:layout_height="0dp" />
+            <TextView
+                android:id="@+id/category"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:text="Category" />
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <ImageView
+                android:id="@+id/image_bedroom"
+                android:layout_width="match_parent"
+                android:layout_weight="2"
+                android:layout_height="0dp" />
+            <TextView
+                android:id="@+id/bedroom"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:text="Bedrooms" />
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <ImageView
+                android:id="@+id/image_bath"
+                android:layout_width="match_parent"
+                android:layout_weight="2"
+                android:layout_height="0dp" />
+            <TextView
+                android:id="@+id/bath"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:text="Bathrooms" />
+        </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Description" />
+
+    <ToggleButton
+        android:id="@+id/favourite_button"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textAlignment="center"
+        android:textOn="Add to Favourites"
+        android:textOff="Remove from Favourites"/>
+</LinearLayout>

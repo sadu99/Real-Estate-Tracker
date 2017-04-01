@@ -3,9 +3,6 @@ package real_estate_tracker.realestatetrackerandroid;
 import android.content.Context;
 
 import com.android.volley.VolleyError;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,7 +17,7 @@ public class NetworkOperations implements NetworkRequest.Listener {
     private Context mContext;
     private NetworkRequest mNetworkRequest;
     private Listener mListener;
-    private String mUserID;
+    private UserObject mUserObject;
     private ArrayList<PropertyObject> mPropertiesList = new ArrayList<>();
     private ArrayList<PropertyObject> mFavouritesList = new ArrayList<>();
     private static final String FAVOURITE_GET = "FAVOURITE_GET";
@@ -41,15 +38,9 @@ public class NetworkOperations implements NetworkRequest.Listener {
         mContext = context;
         mNetworkRequest = new NetworkRequest(this,mContext);
         mListener = listener;
+        mUserObject = new UserObject();
     }
 
-    public String getUserID(){
-        if (mUserID == null){
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            mUserID = user.getUid();
-        }
-        return mUserID;
-    }
 
     public void addUser(String name, String userID, String email) throws JSONException {
         JSONObject json = new JSONObject();
@@ -60,7 +51,7 @@ public class NetworkOperations implements NetworkRequest.Listener {
     }
 
     public void getFavourites(){
-        String user = getUserID() ;
+        String user = mUserObject.getUserID();
         String url = "favourites/?userID=" + user;
         mNetworkRequest.getRequest(url,FAVOURITE_GET);
     }
@@ -68,7 +59,7 @@ public class NetworkOperations implements NetworkRequest.Listener {
     public void addFavourites(Boolean isFavourite,Boolean prevFavourite, String listingID) throws JSONException {
         if (prevFavourite != isFavourite){
             JSONObject json = new JSONObject();
-            json.put("userID",getUserID());
+            json.put("userID",mUserObject.getUserID());
             json.put("listingID",listingID);
             if (!isFavourite){
                 json.put("removeListing",true);

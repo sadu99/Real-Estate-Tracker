@@ -4,19 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.res.Resources;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -113,10 +105,7 @@ public class DetailFragment extends DialogFragment implements Serializable {
         mFavouriteButton = (ToggleButton) layout.findViewById(R.id.favourite_button);
         prevFavourite = property.getIsFavourite();
         isFavourite = prevFavourite;
-        Drawable star = getResources().getDrawable(R.drawable.ic_star_black_24dp);
-        star.setColorFilter(getResources().getColor(R.color.year), PorterDuff.Mode.SRC_IN);
-        mFavouriteButton.setBackgroundDrawable(star);
-        mFavouriteButton.setChecked(isFavourite);
+        mFavouriteButton.setChecked(!prevFavourite);
         mFavouriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -127,14 +116,11 @@ public class DetailFragment extends DialogFragment implements Serializable {
     }
 
     private void checkFavourite(boolean isChecked){
-        Drawable star = getResources().getDrawable(R.drawable.ic_star_black_24dp);
         if (!isChecked) {
-            star.setColorFilter(getResources().getColor(R.color.year), PorterDuff.Mode.SRC_IN);
-            mFavouriteButton.setBackgroundDrawable(star);
+            mFavouriteButton.setBackgroundColor(getResources().getColor(R.color.year));
             isFavourite = false;
         }else{
-            star.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_IN);
-            mFavouriteButton.setBackgroundDrawable(star);
+            mFavouriteButton.setBackgroundColor(getResources().getColor(R.color.colorAccent));
             isFavourite = true;
         }
     }

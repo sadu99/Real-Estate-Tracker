@@ -40,7 +40,8 @@ public class MainActivity extends NavigationActivity
     private Integer mCounter;
     private ArrayList<Marker> mMarkers = new ArrayList<>();
     private NetworkOperations mNetworkOperations;
-    private final static String TAG_FRAGMENT = "Detail Fragment";
+    private static final String DETAIL_FRAGMENT = "DETAIL_FRAGMENT";
+    private static final String SEARCH_FRAGMENT = "SEARCH_FRAGMENT";
     private int mPosition;
 
     @Override
@@ -81,7 +82,7 @@ public class MainActivity extends NavigationActivity
                 mPosition = position;
                 // Create an instance of the dialog fragment and show it
                 DetailFragment dialog = DetailFragment.newInstance(propertyObject);
-                dialog.show(getSupportFragmentManager(),TAG_FRAGMENT);
+                dialog.show(getSupportFragmentManager(),DETAIL_FRAGMENT);
             }
 
             @Override
@@ -147,7 +148,7 @@ public class MainActivity extends NavigationActivity
     public void showDialog() {
         // Create an instance of the dialog fragment and show it
         SearchFragment dialog = new SearchFragment();
-        dialog.show(getSupportFragmentManager(),"SearchFragment");
+        dialog.show(getSupportFragmentManager(),SEARCH_FRAGMENT);
     }
 
     @Override

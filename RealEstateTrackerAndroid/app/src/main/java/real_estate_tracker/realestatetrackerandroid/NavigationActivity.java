@@ -9,6 +9,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 /**
  * Created by Sanhar on 2017-03-24.
@@ -16,6 +18,8 @@ import android.view.MenuItem;
 
 public class NavigationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private ActionBarDrawerToggle mToggle;
+    private TextView mUserName,mUserEmail;
+    private UserObject mUserObject;
     public NavigationView mNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +27,7 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         setContentView(R.layout.activity_navigation);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        mUserObject = new UserObject();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mToggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -32,6 +36,13 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
+
+        View headerView =  mNavigationView.getHeaderView(0);
+        mUserName = (TextView)headerView.findViewById(R.id.userName);
+        mUserEmail = (TextView)headerView.findViewById(R.id.userEmail);
+        
+        mUserName.setText(mUserObject.getUserName());
+        mUserEmail.setText(mUserObject.getUserEmail());
     }
 
     @Override
@@ -59,6 +70,8 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
             startActivity(intent);
         } else if (id == R.id.nav_settings) {
             // Handle the settings activity
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -66,16 +79,6 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         return true;
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//
-//        if (mToggle.onOptionsItemSelected(item)) {
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//
-//    }
-//
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);

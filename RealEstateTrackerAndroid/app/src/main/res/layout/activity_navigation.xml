@@ -8,8 +8,6 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-
-    <!-- The main content view -->
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +17,6 @@
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <!-- Put what you want as your normal screen in here, you can also choose for a linear layout or any other layout, whatever you prefer -->
         </FrameLayout>
 
         <include
