@@ -133,120 +133,149 @@ func main() {
 
 		userID := c.Query("userID")
 
-		favouritesRef, err := f.Ref("users/" + userID + "/favourites")
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		var favourites map[string]bool
-		if err := favouritesRef.Value(&favourites); err != nil {
-			log.Fatal(err)
-		}
-
-		listingsClean := make([]Listing, len(favourites))
-
-		idx := 0
-
-		for listingID := range favourites {
-
-			resp, err := http.Get(ZooplaBaseUrl + ZooplaPropertyListingsUrl + "listing_id=" + listingID +
-				"&api_key=" + ZooplaApiKey)
-
+		if len(userID) <= 0 {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": fmt.Sprintf("userID is a required field."),
+			})
+		} else {
+			favouritesRef, err := f.Ref("users/" + userID + "/favourites")
 			if err != nil {
 				log.Fatal(err)
 			}
-			defer resp.Body.Close()
-			body, err := ioutil.ReadAll(resp.Body)
 
-			var response interface{}
-			json.Unmarshal(body, &response)
+			var favourites map[string]bool
+			if err := favouritesRef.Value(&favourites); err != nil {
+				log.Fatal(err)
+			}
 
-			dataMap := response.(map[string]interface{})
+			listingsClean := make([]Listing, len(favourites))
 
-			listingsClean[idx] = getCleanListingsData(dataMap["listing"].([]interface{}))[0]
+			idx := 0
 
-			idx++
+			for listingID := range favourites {
 
+				resp, err := http.Get(ZooplaBaseUrl + ZooplaPropertyListingsUrl + "listing_id=" + listingID +
+					"&api_key=" + ZooplaApiKey)
+
+				if err != nil {
+					log.Fatal(err)
+				}
+				defer resp.Body.Close()
+				body, err := ioutil.ReadAll(resp.Body)
+
+				var response interface{}
+				json.Unmarshal(body, &response)
+
+				dataMap := response.(map[string]interface{})
+
+				listingsClean[idx] = getCleanListingsData(dataMap["listing"].([]interface{}))[0]
+
+				idx++
+
+			}
+
+			var result map[string]interface{}
+
+			result = gin.H{
+				"listings": listingsClean,
+				"count":    len(listingsClean),
+			}
+
+			c.JSON(http.StatusOK, result)
 		}
-
-		var result map[string]interface{}
-
-		result = gin.H{
-			"listings": listingsClean,
-			"count":    len(listingsClean),
-		}
-
-		c.JSON(http.StatusOK, result)
 	})
 
 	// POST - new user details
 	router.POST("/user", func(c *gin.Context) {
 
-		userID := c.PostForm("userID")
-		name := c.PostForm("name")
-		email := c.PostForm("email")
-
-		usersRef, err := f.Ref("users/" + userID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		v := map[string]interface{}{
-			"name": name,
-			"email": email,
+		type User struct {
+			UserID string `form:"userID" json:"userID"`
+			Name string `form:"name" json:"name"`
+			Email string `form:"email" json:"email"`
 		}
 
-		if err := usersRef.Set(v); err != nil {
-			log.Fatal(err)
-		}
+		var user User
+		if c.BindJSON(&user) == nil {
+			if len(user.UserID) <= 0 {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"message": fmt.Sprintf("userID is a required field."),
+				})
+			} else {
+				usersRef, err := f.Ref("users/" + user.UserID)
+				if err != nil {
+					log.Fatal(err)
+				}
+				v := map[string]interface{}{
+					"name": user.Name,
+					"email": user.Email,
+				}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": fmt.Sprintf("successfully created user: %s", name),
-		})
+				if err := usersRef.Set(v); err != nil {
+					log.Fatal(err)
+				}
+
+				c.JSON(http.StatusOK, gin.H{
+					"message": fmt.Sprintf("successfully created user: %s", user.Name),
+				})
+			}
+		}
 	})
 
 	// PUT - update favourites for a user
 	router.PUT("/user", func(c *gin.Context) {
 
-		userID := c.PostForm("userID")
-		listingID := c.PostForm("listingID")
-
-		var removeListing bool
-		removeListingValue, removeListingKey := c.GetPostForm("removeListing")
-
-		if removeListingKey {
-			val, _ := strconv.ParseBool(removeListingValue)
-			removeListing = val
-		} else {
-			removeListing = false
+		type FavouritesRequest struct {
+			UserID string `form:"userID" json:"userID"`
+			ListingID string `form:"listingID" json:"listingID"`
+			RemoveListing string `form:"removeListing" json:"removeListing"`
 		}
 
-		favouritesRef, err := f.Ref("users/" + userID + "/favourites")
-		if err != nil {
-			log.Fatal(err)
-		}
+		var favReq FavouritesRequest
 
-		var favourites map[string]bool
-		if err := favouritesRef.Value(&favourites); err != nil {
-			log.Fatal(err)
-		}
+		if c.BindJSON(&favReq) == nil {
+			if len(favReq.UserID) <= 0 || len(favReq.ListingID) <= 0 {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"message": fmt.Sprintf("userID and listingID are required fields."),
+				})
+			} else {
+				var removeListing bool
 
-		if favourites == nil {
-			favourites = make(map[string]bool)
-		}
+				if len(favReq.RemoveListing) <= 0 {
+					removeListing = false
+				} else {
+					val, _ := strconv.ParseBool(favReq.RemoveListing)
+					removeListing = val
+				}
 
-		if removeListing {
-			delete(favourites, listingID)
-		} else {
-			favourites[listingID] = true
-		}
+				favouritesRef, err := f.Ref("users/" + favReq.UserID + "/favourites")
+				if err != nil {
+					log.Fatal(err)
+				}
 
-		if err := favouritesRef.Set(favourites); err != nil {
-			log.Fatal(err)
-		}
+				var favourites map[string]bool
+				if err := favouritesRef.Value(&favourites); err != nil {
+					log.Fatal(err)
+				}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": fmt.Sprintf("successfully updated favourites for userID: %s", userID),
-		})
+				if favourites == nil {
+					favourites = make(map[string]bool)
+				}
+
+				if removeListing {
+					delete(favourites, favReq.ListingID)
+				} else {
+					favourites[favReq.ListingID] = true
+				}
+
+				if err := favouritesRef.Set(favourites); err != nil {
+					log.Fatal(err)
+				}
+
+				c.JSON(http.StatusOK, gin.H{
+					"message": fmt.Sprintf("successfully updated favourites for userID: %s", favReq.UserID),
+				})
+			}
+		}
 	})
 
 	router.Run(":3000")
