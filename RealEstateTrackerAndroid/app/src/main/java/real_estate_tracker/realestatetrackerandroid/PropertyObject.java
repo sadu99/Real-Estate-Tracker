@@ -1,7 +1,5 @@
 package real_estate_tracker.realestatetrackerandroid;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -165,7 +163,9 @@ public class PropertyObject implements Serializable {
         setAddress(getValue(jsonObject.get("Displayable_address").toString(),"N/A)"));
         setPrice(getValue(jsonObject.get("Price").toString(),"N/A"));
         setDescription(getValue(jsonObject.get("Short_description").toString(),"N/A"));
-        setProjectedIncrease(Double.parseDouble(getValue(jsonObject.get("Expected_value").toString(),"0"))*100);
+        Double projectedIncrease = Double.parseDouble(getValue(jsonObject.get("Expected_value").toString(),"0"))*100;
+        projectedIncrease = Math.round(projectedIncrease*100.0)/100.0;
+        setProjectedIncrease(projectedIncrease);
         setCategory(getValue(jsonObject.get("Category").toString(),"N/A"));
     }
 

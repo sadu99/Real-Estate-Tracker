@@ -22,6 +22,7 @@ public class FavouritesActivity extends NavigationActivity implements DetailFrag
     private PropertyAdapter mAdapter;
     private NetworkOperations mNetworkOperations;
     private TextView mTextView;
+    private int mPosition;
     private static final String DETAIL_FRAGMENT = "DETAIL_FRAGMENT";
 
     @Override
@@ -49,6 +50,7 @@ public class FavouritesActivity extends NavigationActivity implements DetailFrag
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), mRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
+                mPosition = position;
                 PropertyObject propertyObject = mPropertiesList.get(position);
                 DetailFragment dialog = DetailFragment.newInstance(propertyObject);
                 dialog.show(getSupportFragmentManager(),DETAIL_FRAGMENT);
@@ -75,6 +77,10 @@ public class FavouritesActivity extends NavigationActivity implements DetailFrag
 
     @Override
     public void onDismissDetailFragment(Boolean isFavourite,Boolean prevFavourite, String listingID) throws JSONException {
+        if (!isFavourite){
+            mPropertiesList.remove(mPosition);
+            mAdapter.notifyDataSetChanged();
+        }
         mNetworkOperations.addFavourites(isFavourite,prevFavourite,listingID);
     }
 
@@ -91,7 +97,7 @@ public class FavouritesActivity extends NavigationActivity implements DetailFrag
     @Override
     public void onAddFavouritesSuccess(String response) throws JSONException {
         Toast.makeText(this,response,Toast.LENGTH_LONG).show();
-        mNetworkOperations.getFavourites();
+//        mNetworkOperations.getFavourites();
     }
 
     @Override

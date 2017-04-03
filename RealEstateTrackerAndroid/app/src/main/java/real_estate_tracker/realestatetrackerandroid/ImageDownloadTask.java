@@ -1,6 +1,5 @@
 package real_estate_tracker.realestatetrackerandroid;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
