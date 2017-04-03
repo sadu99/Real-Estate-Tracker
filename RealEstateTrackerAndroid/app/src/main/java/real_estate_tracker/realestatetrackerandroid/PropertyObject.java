@@ -165,8 +165,7 @@ public class PropertyObject implements Serializable {
         setAddress(getValue(jsonObject.get("Displayable_address").toString(),"N/A)"));
         setPrice(getValue(jsonObject.get("Price").toString(),"N/A"));
         setDescription(getValue(jsonObject.get("Short_description").toString(),"N/A"));
-//        setProjectedIncrease(Double.parseDouble(getValue(jsonObject.get("Expected_value").toString(),"0")));
-        setProjectedIncrease(50.0);
+        setProjectedIncrease(Double.parseDouble(getValue(jsonObject.get("Expected_value").toString(),"0"))*100);
         setCategory(getValue(jsonObject.get("Category").toString(),"N/A"));
     }
 
