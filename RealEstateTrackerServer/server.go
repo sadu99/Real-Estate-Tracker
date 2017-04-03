@@ -212,7 +212,6 @@ func main() {
 		json.Unmarshal(body, &response)
 
 		if string(body) == "<h1>Developer Over Rate</h1>" {
-			log.Fatal("API Limit")
 			c.JSON(http.StatusBadRequest, gin.H{
 				"message": fmt.Sprintf("API Limit"),
 			})
