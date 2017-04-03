@@ -211,36 +211,34 @@ func main() {
 		var response interface{}
 		json.Unmarshal(body, &response)
 
-		if string(body) == "<h1>Developer Over Rate</h1>"{
+		if string(body) == "<h1>Developer Over Rate</h1>" {
 			log.Fatal("API Limit")
 			c.JSON(http.StatusBadRequest, gin.H{
 				"message": fmt.Sprintf("API Limit"),
 			})
-		}
-
-		dataMap := response.(map[string]interface{})
-
-		var result map[string]interface{}
-
-
-		if error_string, ok := dataMap["error_string"]; ok {
-			result = gin.H{
-				"error": error_string,
-				"count" : 0,
-			}
 		} else {
+			dataMap := response.(map[string]interface{})
 
-			listingsDirty := dataMap["listing"].([]interface{})
-			listingsClean := getCleanListingsData(listingsDirty, projected_years)
+			var result map[string]interface{}
 
 
-			result = gin.H{
-				"listings": listingsClean,
-				"count":    len(listingsClean),
+			if error_string, ok := dataMap["error_string"]; ok {
+				result = gin.H{
+					"error": error_string,
+					"count" : 0, }
+			} else {
+
+				listingsDirty := dataMap["listing"].([]interface{})
+				listingsClean := getCleanListingsData(listingsDirty, projected_years)
+
+
+				result = gin.H{
+					"listings": listingsClean,
+					"count":    len(listingsClean),
+				}
 			}
+			c.JSON(http.StatusOK, result)
 		}
-
-		c.JSON(http.StatusOK, result)
 	})
 
 	// GET - all favourites for a user
