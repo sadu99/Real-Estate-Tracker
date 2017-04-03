@@ -42,7 +42,7 @@ type Listing struct {
 }
 
 func getCleanListingsData(listingsDirty []interface{}, projected_years(string)) []Listing {
-	listingsClean := make([]Listing, len(listingsDirty))
+	listingsClean := []Listing{}
 	for idx := range listingsDirty {
 		item := listingsDirty[idx].(map[string]interface{})
 		if returnValue(item["price"]) != 0 {
@@ -64,7 +64,7 @@ func getCleanListingsData(listingsDirty []interface{}, projected_years(string)) 
 			listing.Short_description = item["short_description"].(string)
 			listing.Category = item["category"].(string)
 			listing.Expected_value = getPropertyXValues(listing.Latitude,listing.Longitude,projected_years)
-			listingsClean[idx] = listing
+			listingsClean = append(listingsClean, listing)
 		}
 	}
 	if len(listingsClean) > 0 {
@@ -200,7 +200,7 @@ func main() {
 		}
 
 		resp, err := http.Get(ZooplaBaseUrl + ZooplaPropertyListingsUrl + "listing_status=sale" + "&area=" +
-			area + "&api_key=" + ZooplaApiKey + "&page_size=5" + "&minimum_price=1" + paramsUrl)
+			area + "&api_key=" + ZooplaApiKey + "&page_size=18" + "&minimum_price=1" + paramsUrl)
 
 		if err != nil {
 			log.Fatal(err)
