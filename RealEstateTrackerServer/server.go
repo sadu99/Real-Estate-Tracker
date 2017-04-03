@@ -325,7 +325,7 @@ func main() {
 					"email": user.Email,
 				}
 
-				if err := usersRef.Set(v); err != nil {
+				if err := usersRef.Update(v); err != nil {
 					log.Fatal(err)
 				}
 
