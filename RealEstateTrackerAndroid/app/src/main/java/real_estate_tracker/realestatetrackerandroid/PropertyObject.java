@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class PropertyObject implements Serializable {
     private String mListingId,mBathrooms,mBedrooms,mUrl,mUrlThumbnail,mPropertyType,mAgentName
             ,mAgentAddress,mAgentPhone,mAddress,mPrice,mDescription,mCategory;
-    private Double mLatitude,mLongitude;
+    private Double mLatitude,mLongitude,mProjectedIncrease;
     private boolean mIsFavourite;
 
     PropertyObject(){
@@ -82,6 +82,8 @@ public class PropertyObject implements Serializable {
 
     public boolean getIsFavourite(){return mIsFavourite;}
 
+    public Double getProjectedIncrease(){ return mProjectedIncrease; }
+
     public void setListingId(String listingId){
         mListingId = listingId;
     }
@@ -144,6 +146,10 @@ public class PropertyObject implements Serializable {
 
     public void setIsFavourite (Boolean isFavourite) {mIsFavourite = isFavourite;}
 
+    public void setProjectedIncrease(Double projectedIncrease) {
+        this.mProjectedIncrease = projectedIncrease;
+    }
+
     public void setObject(JSONObject jsonObject) throws JSONException {
         setListingId(jsonObject.get("Listing_id").toString());
         setBathrooms(getValue(jsonObject.get("Num_bathrooms").toString(),"0"));
@@ -159,6 +165,7 @@ public class PropertyObject implements Serializable {
         setAddress(getValue(jsonObject.get("Displayable_address").toString(),"N/A)"));
         setPrice(getValue(jsonObject.get("Price").toString(),"N/A"));
         setDescription(getValue(jsonObject.get("Short_description").toString(),"N/A"));
+        setProjectedIncrease(Double.parseDouble(getValue(jsonObject.get("Expected_value").toString(),"0"))*100);
         setCategory(getValue(jsonObject.get("Category").toString(),"N/A"));
     }
 

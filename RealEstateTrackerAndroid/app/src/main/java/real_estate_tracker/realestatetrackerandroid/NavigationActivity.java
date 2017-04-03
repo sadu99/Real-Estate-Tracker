@@ -10,7 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.facebook.login.widget.ProfilePictureView;
 
 /**
  * Created by Sanhar on 2017-03-24.
@@ -19,6 +22,8 @@ import android.widget.TextView;
 public class NavigationActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private ActionBarDrawerToggle mToggle;
     private TextView mUserName,mUserEmail;
+    private ImageView mImage;
+//    private ProfilePictureView mProfilePictureView;
     private UserObject mUserObject;
     public NavigationView mNavigationView;
     @Override
@@ -40,7 +45,10 @@ public class NavigationActivity extends AppCompatActivity implements NavigationV
         View headerView =  mNavigationView.getHeaderView(0);
         mUserName = (TextView)headerView.findViewById(R.id.userName);
         mUserEmail = (TextView)headerView.findViewById(R.id.userEmail);
-        
+        mImage = (ImageView)headerView.findViewById(R.id.image);
+//        mProfilePictureView = (ProfilePictureView)headerView.findViewById(R.id.profile_picture);
+//        mProfilePictureView.setProfileId(mUserObject.getUserID());
+        mImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_person_black_24dp));
         mUserName.setText(mUserObject.getUserName());
         mUserEmail.setText(mUserObject.getUserEmail());
     }

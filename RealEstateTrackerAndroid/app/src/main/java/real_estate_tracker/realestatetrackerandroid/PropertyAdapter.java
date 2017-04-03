@@ -19,15 +19,15 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.MyView
     private List<PropertyObject> mPropertiesList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView area, bedroom, price;
-        public ImageView image;
+        public TextView mAddress, mPrice, mProjectedIncrease;
+        public ImageView mImage;
 
         public MyViewHolder(View view) {
             super(view);
-            area = (TextView) view.findViewById(R.id.area);
-            bedroom = (TextView) view.findViewById(R.id.bedroom);
-            price = (TextView) view.findViewById(R.id.price);
-            image = (ImageView) view.findViewById(R.id.image);
+            mAddress = (TextView) view.findViewById(R.id.address);
+            mPrice = (TextView) view.findViewById(R.id.price);
+            mProjectedIncrease = (TextView) view.findViewById(R.id.projected_increase);
+            mImage = (ImageView) view.findViewById(R.id.image);
         }
     }
 
@@ -47,11 +47,11 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.MyView
     @Override
     public void onBindViewHolder(PropertyAdapter.MyViewHolder holder, int position) {
         PropertyObject propertyObject = mPropertiesList.get(position);
-//        holder.area.setText(propertyObject.getArea());
-//        holder.bedroom.setText(propertyObject.getBedroom());
-        holder.price.setText(propertyObject.getPrice());
-        if (holder.image != null) {
-            new ImageDownloaderTask(holder.image).execute(propertyObject.getUrlThumbnail());
+        holder.mAddress.setText(propertyObject.getAddress());
+        holder.mPrice.setText(propertyObject.getPrice());
+        holder.mProjectedIncrease.setText(propertyObject.getProjectedIncrease().toString() + "%");
+        if (holder.mImage != null) {
+            new ImageDownloaderTask(holder.mImage).execute(propertyObject.getUrlThumbnail());
         }
     }
 

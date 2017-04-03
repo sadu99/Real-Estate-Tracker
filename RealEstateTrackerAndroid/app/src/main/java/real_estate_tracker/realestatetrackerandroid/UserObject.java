@@ -1,5 +1,6 @@
 package real_estate_tracker.realestatetrackerandroid;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -34,5 +35,14 @@ public class UserObject {
             mUserEmail = mUser.getEmail();
         }
         return mUserEmail;
+    }
+
+    public void logout(){
+        FirebaseAuth.getInstance().signOut();
+        LoginManager.getInstance().logOut();
+    }
+
+    public String getFacebookProfilePicture(){
+       return "https://graph.facebook.com/" + getUserID() + "/picture?type=large";
     }
 }

@@ -90,7 +90,8 @@ public class FavouritesActivity extends NavigationActivity implements DetailFrag
 
     @Override
     public void onAddFavouritesSuccess(String response) throws JSONException {
-        Toast.makeText(this,"Successfully added property to your favourites",Toast.LENGTH_LONG).show();
+        Toast.makeText(this,response,Toast.LENGTH_LONG).show();
+        mNetworkOperations.getFavourites();
     }
 
     @Override
