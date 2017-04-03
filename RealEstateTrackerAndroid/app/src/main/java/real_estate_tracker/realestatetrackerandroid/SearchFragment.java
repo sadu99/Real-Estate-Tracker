@@ -3,26 +3,31 @@ package real_estate_tracker.realestatetrackerandroid;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 /**
  * Created by Sanhar on 2017-03-20.
  */
 
 public class SearchFragment extends DialogFragment {
-    private EditText mArea;
-    private EditText mPrice;
-    private EditText mBedrooms;
+    private EditText mArea,  mPrice, mBedrooms, mProjectedYears;
+    private Spinner mFurnished;
+    Context context;
+    private static final String[] FURNISHED_ITEMS = {"all","furnished", "unfurnished", "part-furnished"};
     /* The activity that creates an instance of this dialog fragment must
  * implement this interface in order to receive event callbacks.
  * Each method passes the DialogFragment in case the host needs to query it. */
     public interface Listener {
-        void onDialogPositiveClick(DialogInterface dialog, EditText text);
+        void onDialogPositiveClick(DialogInterface dialog, String area, String price, String bedroom,
+                                   String furnished, String projectedYears);
         void onDialogNegativeClick(DialogInterface dialog);
     }
 
@@ -50,7 +55,7 @@ public class SearchFragment extends DialogFragment {
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View layout = inflater.inflate(R.layout.search_form,null);
-        initButtons(layout);
+        initializeView(layout);
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(layout)
@@ -58,7 +63,9 @@ public class SearchFragment extends DialogFragment {
                 .setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogPositiveClick(dialog,mArea);
+                        mListener.onDialogPositiveClick(dialog,mArea.getText().toString(),
+                                mPrice.getText().toString(),mBedrooms.getText().toString(),
+                                mFurnished.getSelectedItem().toString(),mProjectedYears.getText().toString());
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -71,9 +78,13 @@ public class SearchFragment extends DialogFragment {
         return builder.create();
     }
 
-    private void initButtons(View layout){
+    private void initializeView(View layout){
         mArea = (EditText)layout.findViewById(R.id.area);
         mPrice = (EditText)layout.findViewById(R.id.price);
         mBedrooms = (EditText)layout.findViewById(R.id.bedroom);
+        mFurnished = (Spinner)layout.findViewById(R.id.furnished);
+        mProjectedYears = (EditText)layout.findViewById(R.id.projected_years);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_spinner_item,FURNISHED_ITEMS);
+        mFurnished.setAdapter(adapter);
     }
 }

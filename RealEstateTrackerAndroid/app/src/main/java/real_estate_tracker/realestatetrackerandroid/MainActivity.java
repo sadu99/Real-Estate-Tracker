@@ -7,7 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -78,9 +77,8 @@ public class MainActivity extends NavigationActivity
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), mRecyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                PropertyObject propertyObject = mPropertiesList.get(position);
                 mPosition = position;
-                // Create an instance of the dialog fragment and show it
+                PropertyObject propertyObject = mPropertiesList.get(position);
                 DetailFragment dialog = DetailFragment.newInstance(propertyObject);
                 dialog.show(getSupportFragmentManager(),DETAIL_FRAGMENT);
             }
@@ -92,15 +90,6 @@ public class MainActivity extends NavigationActivity
         }));
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -152,9 +141,43 @@ public class MainActivity extends NavigationActivity
     }
 
     @Override
-    public void onDialogPositiveClick(DialogInterface dialog, EditText text) {
-        String area = text.getText().toString() ;
-        mNetworkOperations.getSearch(area,"");
+    public void onDialogPositiveClick(DialogInterface dialog, String area, String price, String bedroom, String furnished, String projectedYears) {
+        String url = "";
+        if (area.isEmpty() || area == null){
+            Toast.makeText(this,"Area cannot be empty",Toast.LENGTH_LONG).show();
+            showDialog();
+        } else {
+            if (!(price.isEmpty() || price == null)){
+                if (!isNumeric(price)) {
+                    Toast.makeText(this,"Price must be an integer",Toast.LENGTH_LONG).show();
+                    showDialog();
+                }
+                url = url + "maximum_price=" + price;
+            }
+            if (!(bedroom.isEmpty() || bedroom == null)){
+                if (!isNumeric(bedroom)) {
+                    Toast.makeText(this,"Bedrooms must be an integer",Toast.LENGTH_LONG).show();
+                    showDialog();
+                }
+                url = url + "&maximum_beds=" + bedroom;
+            }
+            if (!(furnished.isEmpty() || furnished == null || furnished.equals("all"))){
+                url = url + "&furnished=" + furnished;
+            }
+
+            if (!(projectedYears.isEmpty() || projectedYears == null)){
+                if (!isNumeric(projectedYears)) {
+                    Toast.makeText(this,"Time Period must be an integer",Toast.LENGTH_LONG).show();
+                    showDialog();
+                }
+                url = url + "&projected_years=" + projectedYears;
+            }
+        }
+        mNetworkOperations.getSearch(area,url);
+    }
+
+    public boolean isNumeric(String s) {
+        return s.matches("[-+]?\\d*\\.?\\d+");
     }
 
     @Override
@@ -176,7 +199,7 @@ public class MainActivity extends NavigationActivity
 
     @Override
     public void onAddFavouritesSuccess(String response) throws JSONException {
-        Toast.makeText(this,"Successfully added property to your favourites",Toast.LENGTH_LONG).show();
+        Toast.makeText(this,response,Toast.LENGTH_LONG).show();
     }
 
     @Override

@@ -19,9 +19,8 @@ import org.json.JSONObject;
 public class NetworkRequest {
 
     private static final String ENDPOINT = "http://52.168.81.137:3000/";
-
-    Listener mListener;
-    Context mContext;
+    private Listener mListener;
+    private Context mContext;
 
     public interface Listener {
         void onSuccess(JSONObject response,String type) throws JSONException;

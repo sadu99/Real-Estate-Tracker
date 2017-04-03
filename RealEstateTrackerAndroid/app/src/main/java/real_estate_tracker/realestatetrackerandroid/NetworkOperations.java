@@ -22,6 +22,7 @@ public class NetworkOperations implements NetworkRequest.Listener {
     private ArrayList<PropertyObject> mFavouritesList = new ArrayList<>();
     private static final String FAVOURITE_GET = "FAVOURITE_GET";
     private static final String FAVOURITE_ADD = "FAVOURITE_ADD";
+    private static final String FAVOURITE_DEL = "FAVOURITE_DEL";
     private static final String SEARCH = "SEARCH";
     private static final String LOGIN = "LOGIN";
 
@@ -57,21 +58,23 @@ public class NetworkOperations implements NetworkRequest.Listener {
     }
 
     public void addFavourites(Boolean isFavourite,Boolean prevFavourite, String listingID) throws JSONException {
+        String type = FAVOURITE_ADD;
         if (prevFavourite != isFavourite){
             JSONObject json = new JSONObject();
             json.put("userID",mUserObject.getUserID());
             json.put("listingID",listingID);
             if (!isFavourite){
-                json.put("removeListing",true);
+                json.put("removeListing","true");
+                type = FAVOURITE_DEL;
             }
-
-            mNetworkRequest.putRequest("user",json,FAVOURITE_ADD);
+            mNetworkRequest.putRequest("user",json,type);
         }
     }
 
-    public void getSearch(String area, String price){
+    public void getSearch(String area, String appendUrl){
         getFavourites();
         String url = "location/" + area;
+        url = url + "?" + appendUrl;
         mNetworkRequest.getRequest(url,SEARCH);
     }
 
@@ -96,22 +99,24 @@ public class NetworkOperations implements NetworkRequest.Listener {
 
     @Override
     public void onSuccess(JSONObject response, String type) throws JSONException {
-        if (response.get("count").toString() == "0"){
+        if (type.equals(FAVOURITE_ADD)) {
+            mListener.onAddFavouritesSuccess("Successfully added property");
+        } else if (type.equals(FAVOURITE_DEL)){
+            mListener.onAddFavouritesSuccess("Successfully removed property");
+        } else if (response.get("count").toString().equals("0")){
             if (response.get("error") != null){
                 mListener.onError(response.get("error").toString());
             }
             mListener.onError("Error");
         } else {
-            if (type == SEARCH){
+            if (type.equals(SEARCH)){
                 JSONArray propertyListings = (JSONArray) response.get("listings");
                 mListener.onSearchSuccess(getPropertyListings(propertyListings,type));
-            } else if (type == FAVOURITE_GET) {
+            } else if (type.equals(FAVOURITE_GET)) {
                 JSONArray propertyListings = (JSONArray) response.get("listings");
                 mFavouritesList = getPropertyListings(propertyListings,type);
                 mListener.onGetFavouritesSuccess(mFavouritesList);
-            } else if (type == FAVOURITE_ADD) {
-                mListener.onAddFavouritesSuccess("Successfully added property");
-            } else if (type == LOGIN){
+            } else if (type.equals(LOGIN)){
                 mListener.onLoginSuccess("Successful Login");
             } else {
                 mListener.onError("Error");

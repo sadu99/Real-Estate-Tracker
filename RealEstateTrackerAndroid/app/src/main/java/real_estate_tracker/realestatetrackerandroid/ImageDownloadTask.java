@@ -14,7 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by Sanhar on 2017-03-25.
+ * Taken from http://stacktips.com/tutorials/android/loading-image-asynchronously-in-android-listview
  */
 
 class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
@@ -41,7 +41,7 @@ class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
                 if (bitmap != null) {
                     imageView.setImageBitmap(bitmap);
                 } else {
-                    Drawable placeholder = imageView.getContext().getResources().getDrawable(R.drawable.common_full_open_on_phone);
+                    Drawable placeholder = imageView.getContext().getResources().getDrawable(R.drawable.ic_home_black_24dp);
                     imageView.setImageDrawable(placeholder);
                 }
             }
@@ -51,9 +51,9 @@ class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
         HttpURLConnection urlConnection = null;
         try {
             if (url.toString().isEmpty() || url == null) {
-                return BitmapFactory.decodeResource(Resources.getSystem(),
-                        R.drawable.ic_error_black_24dp);
+                return null;
             }
+
             URL uri = new URL(url);
             urlConnection = (HttpURLConnection) uri.openConnection();
             int statusCode = urlConnection.getResponseCode();

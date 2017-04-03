@@ -17,11 +17,22 @@
         android:id="@+id/price"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:hint="Max Price"/>
+        android:hint="Maximum Price"/>
 
     <EditText
         android:id="@+id/bedroom"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:hint="Number of Bedrooms"/>
+        android:hint="Maximum Number of Bedrooms"/>
+
+    <EditText
+        android:id="@+id/projected_years"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:hint="Time Period of Investment Holding"/>
+
+    <Spinner
+        android:id="@+id/furnished"
+        android:layout_width="match_parent"
+        android:layout_height="75dp" />
 </LinearLayout>

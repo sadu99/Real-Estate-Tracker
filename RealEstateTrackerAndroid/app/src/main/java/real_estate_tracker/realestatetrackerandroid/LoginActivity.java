@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,12 +30,12 @@ import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity implements NetworkOperations.Listener {
 
-    private TextView mInfo;
     private LoginButton mLoginButton;
     private CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private NetworkOperations mNetworkOperations;
+    private ImageView mImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,7 @@ public class LoginActivity extends AppCompatActivity implements NetworkOperation
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
+                    finish();
 
                     // User is signed in
                     Log.d("firebase:signed_in:", "onAuthStateChanged:signed_in:" + user.getUid());
@@ -74,19 +76,14 @@ public class LoginActivity extends AppCompatActivity implements NetworkOperation
         };
 
         setContentView(R.layout.activity_login);
-        mInfo = (TextView)findViewById(R.id.info);
+        mImage = (ImageView) findViewById(R.id.image);
+        mImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_landscape_black_24dp));
+        mImage.setColorFilter(getResources().getColor(R.color.blue));
         mLoginButton = (LoginButton)findViewById(R.id.login_button);
         mLoginButton.setReadPermissions("email", "public_profile");
         mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                mInfo.setText(
-                        "User ID: "
-                        + loginResult.getAccessToken().getUserId()
-                        + "\n" +
-                        "Auth Token: "
-                        + loginResult.getAccessToken().getToken()
-                );
 
                 handleFacebookAccessToken(loginResult.getAccessToken());
 
@@ -96,14 +93,13 @@ public class LoginActivity extends AppCompatActivity implements NetworkOperation
             @Override
             public void onCancel() {
                 Log.d("CANCEL", "CANCEL");
-                mInfo.setText("Login attempt canceled.");
+                Toast.makeText(LoginActivity.this,"Login attempt canceled",Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onError(FacebookException e) {
                 Log.d("ERROR", e.getMessage());
-                mInfo.setText("Login attempt failed.");
-
+                Toast.makeText(LoginActivity.this,"Login attempt failed.",Toast.LENGTH_LONG).show();
             }
         });
     }
