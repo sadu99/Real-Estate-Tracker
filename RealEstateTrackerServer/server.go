@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"math"
 	"github.com/soniakeys/meeus/interp"
+	"github.com/bradfitz/slice"
 )
 
 const (
@@ -40,11 +41,11 @@ type Listing struct {
 	Expected_value float64
 }
 
-func getCleanListingsData(listingsDirty []interface{},projected_years(string)) []Listing {
+func getCleanListingsData(listingsDirty []interface{}, projected_years(string)) []Listing {
 	listingsClean := make([]Listing, len(listingsDirty))
 	for idx := range listingsDirty {
 		item := listingsDirty[idx].(map[string]interface{})
-		if returnValue(item["price"]) != 0{
+		if returnValue(item["price"]) != 0 {
 			var listing Listing
 			listing.Listing_id = item["listing_id"].(string)
 			listing.Num_bathrooms = item["num_bathrooms"].(string)
@@ -66,15 +67,23 @@ func getCleanListingsData(listingsDirty []interface{},projected_years(string)) [
 			listingsClean[idx] = listing
 		}
 	}
+	if len(listingsClean) > 0 {
+		slice.Sort(listingsClean[:], func(i, j int) bool {
+			return listingsClean[i].Expected_value > listingsClean[j].Expected_value
+		})
+	}
 	return listingsClean
 }
 
-func getPropertyXValues(current_latitude(float64),current_longitude(float64),projected_years(string)) float64 {
+func getPropertyXValues(current_latitude(float64), current_longitude(float64), projected_years(string)) float64 {
+
 	resp, err := http.Get(ZooplaBaseUrl + ZooplaEstimatesUrl + "latitude=" + FloatToString(current_latitude) +
 		"&longitude=" + FloatToString(current_longitude) + "&radius=0.05&api_key=" + ZooplaApiKey)
+
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 
@@ -102,7 +111,7 @@ func getPropertyXValues(current_latitude(float64),current_longitude(float64),pro
 
 		for idx2:= range percentageChange{
 			lastelement:=percentageChange[idx2]
-			if lastelement != 0 && euclidean_distance!= 0{
+			if lastelement != 0 && euclidean_distance!= 0 {
 				lastelement = lastelement/euclidean_distance
 				total_percentageChange[idx2] = total_percentageChange[idx2] + lastelement
 				denominator[idx2] = denominator[idx2] + 100/euclidean_distance
@@ -123,7 +132,7 @@ func getPropertyXValues(current_latitude(float64),current_longitude(float64),pro
 	}
 
 	float_projected_years := StringToFloat(projected_years)
-	if float_projected_years < 5{
+	if float_projected_years < 5 {
 		return interp.Lagrange(float_projected_years, table)
 	} else {
 		return interp.Lagrange(math.Mod(float_projected_years,5), table) +
@@ -182,10 +191,11 @@ func main() {
 
 		if len(params) > 0 {
 			for k, v := range params {
-				if k == "projected_years"{
-					projected_years= v[0]
+				if k == "projected_years" {
+					projected_years = v[0]
+				} else {
+					paramsUrl += "&" + k + "=" + v[0]
 				}
-				paramsUrl += "&" + k + "=" + v[0]
 			}
 		}
 
@@ -221,7 +231,7 @@ func main() {
 		} else {
 
 			listingsDirty := dataMap["listing"].([]interface{})
-			listingsClean := getCleanListingsData(listingsDirty,projected_years)
+			listingsClean := getCleanListingsData(listingsDirty, projected_years)
 
 
 			result = gin.H{
