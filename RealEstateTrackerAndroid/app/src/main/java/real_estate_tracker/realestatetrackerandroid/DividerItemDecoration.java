@@ -1,9 +1,5 @@
 package real_estate_tracker.realestatetrackerandroid;
 
-/**
- * Created by Sanhar on 2017-03-20.
- */
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -14,8 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**
- * Created by Lincoln on 30/10/15.
+ * taken from http://www.androidhive.info/2016/01/android-working-with-recycler-view/
  */
+
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     private static final int[] ATTRS = new int[]{
